@@ -1,0 +1,54 @@
+databases:
+  - name: keycloak-db
+    databaseName: keycloak
+    user: keycloak
+    plan: starter
+
+services:
+  - type: web
+    name: keycloak
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+
+    # Important: Render injects an ephemeral $PORT into the container.
+    # We don't need to hardcode 8443 because our CMD uses --http-port=${PORT}.
+
+    envVars:
+      # ---- Admin bootstrap (26+). Only required on FIRST boot before 'master' realm exists. ----
+      - key: KC_BOOTSTRAP_ADMIN_USERNAME
+        sync: false   # set in dashboard
+      - key: KC_BOOTSTRAP_ADMIN_PASSWORD
+        sync: false   # set in dashboard (strong password)
+
+      # ---- Hostname for external URLs (https://<your-service>.onrender.com) ----
+      - key: KC_HOSTNAME
+        value: https://<your-keycloak-service>.onrender.com
+
+      # ---- Database wiring from the Render Postgres resource ----
+      - key: KC_DB_URL
+        # Render gives us host/port/db; Keycloak expects JDBC
+        # If you ever use an external connection, append ?sslmode=require
+        value: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+      - key: KC_DB_USERNAME
+        fromDatabase:
+          name: keycloak-db
+          property: user
+      - key: KC_DB_PASSWORD
+        fromDatabase:
+          name: keycloak-db
+          property: password
+
+      # Helper vars to construct KC_DB_URL above (purely for stringing)
+      - key: DB_HOST
+        fromDatabase:
+          name: keycloak-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: keycloak-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: keycloak-db
+          property: database
