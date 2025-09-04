@@ -22,4 +22,4 @@ EXPOSE 8443
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 
-CMD ["start", "--http-host=0.0.0.0", "--http-port=8080"]
+CMD ["start", "--http-host=0.0.0.0", "--http-port=8443"]
