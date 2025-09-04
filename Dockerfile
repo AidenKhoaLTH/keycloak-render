@@ -22,4 +22,4 @@ EXPOSE 8443 8444
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 
-CMD /opt/keycloak/bin/kc.sh start --db=postgres --http-host=0.0.0.0 --http-port=${PORT}
+CMD ["start", "--db=postgres", "--http-host=0.0.0.0", "--http-port=8080"]
