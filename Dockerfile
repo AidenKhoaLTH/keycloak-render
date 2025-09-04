@@ -10,7 +10,7 @@ FROM quay.io/keycloak/keycloak:26.0
 
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
-ENV KC_DB=postgres
+# ENV KC_DB=postgres
 ENV KC_PROXY=edge
 ENV KC_HTTP_ENABLED=true
 ENV KC_HTTP_RELATIVE_PATH=/auth
@@ -18,8 +18,8 @@ ENV KC_HOSTNAME_STRICT=false
 ENV KC_HOSTNAME_STRICT_HTTPS=false
 
 
-EXPOSE 8080
+EXPOSE 8443
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 
-CMD ["start", "--db=postgres"]
+CMD ["start", "--http-host=0.0.0.0", "--http-port=8080"]
